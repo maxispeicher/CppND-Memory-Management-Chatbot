@@ -39,10 +39,10 @@ ChatLogic::~ChatLogic() {
       delete *it;
   }*/
 
-  // delete all edges
-  for (auto it = std::begin(_edges); it != std::end(_edges); ++it) {
+  // delete not necessary as it's a unique pointer now
+  /*for (auto it = std::begin(_edges); it != std::end(_edges); ++it) {
     delete *it;
-  }
+  }*/
 
   std::cout << "ChatLogic Destructor"
             << "\n";
@@ -190,7 +190,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
 
               // store reference in child node and parent node
               (*childNode)->AddEdgeToParentNode(edge);
-              (*parentNode)->AddEdgeToChildNode(edge);
+              (*parentNode)->AddEdgeToChildNode(std::move(edge));
             }
 
             ////
