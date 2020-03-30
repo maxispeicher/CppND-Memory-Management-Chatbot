@@ -47,6 +47,8 @@ ChatLogic::~ChatLogic()
         delete *it;
     }
 
+    std::cout << "ChatLogic Destructor" << "\n";
+
     ////
     //// EOF STUDENT CODE
 }
