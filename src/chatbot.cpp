@@ -60,7 +60,11 @@ operator=(const ChatBot &source) // 3: copy assignment operator
   if (this == &source)
     return *this;
 
-  delete _image;
+  if (_image != NULL) // Attention: wxWidgets used NULL and not nullptr
+  {
+    delete _image;
+    _image = NULL;
+  }
 
   _image = new wxBitmap(*source._image);
   _chatLogic = source._chatLogic;
@@ -90,7 +94,11 @@ ChatBot &ChatBot::operator=(ChatBot &&source) // 5: move assignment operator
   if (this == &source)
     return *this;
 
-  delete _image;
+  if (_image != NULL) // Attention: wxWidgets used NULL and not nullptr
+  {
+    delete _image;
+    _image = NULL;
+  }
 
   _chatLogic = source._chatLogic;
   _rootNode = source._rootNode;
