@@ -43,8 +43,11 @@ ChatBot::~ChatBot() {
 ////
 ChatBot::ChatBot(const ChatBot &source) // 2: copy constructor
 {
-  ChatBot::_image = new wxBitmap();
-  *ChatBot::_image = *source._image;
+  _chatLogic = source._chatLogic;
+  _rootNode = source._rootNode;
+  _currentNode = source._currentNode;
+
+  _image = new wxBitmap(*source._image);
   std::cout << "ChatBot Copy Constructor. COPYING content of instance "
             << &source << " to instance " << this << std::endl;
 }
@@ -57,13 +60,12 @@ operator=(const ChatBot &source) // 3: copy assignment operator
   if (this == &source)
     return *this;
 
-  if (ChatBot::_image != NULL) // Attention: wxWidgets used NULL and not nullptr
-  {
-    delete ChatBot::_image;
-    ChatBot::_image = NULL;
-  }
-  ChatBot::_image = new wxBitmap();
-  *ChatBot::_image = *source._image;
+  delete _image;
+
+  _image = new wxBitmap(*source._image);
+  _chatLogic = source._chatLogic;
+  _rootNode = source._rootNode;
+  _currentNode = source._currentNode;
   return *this;
 }
 
@@ -71,8 +73,14 @@ ChatBot::ChatBot(ChatBot &&source) // 4: move constructor
 {
   std::cout << "ChatBot move constructor" << std::endl;
 
-  ChatBot::_image = source._image;
+  _chatLogic = source._chatLogic;
+  _rootNode = source._rootNode;
+  _image = source._image;
+  _currentNode = source._currentNode;
+  source._chatLogic = nullptr;
+  source._rootNode = nullptr;
   source._image = NULL;
+  source._currentNode = nullptr;
 }
 
 ChatBot &ChatBot::operator=(ChatBot &&source) // 5: move assignment operator
@@ -82,14 +90,16 @@ ChatBot &ChatBot::operator=(ChatBot &&source) // 5: move assignment operator
   if (this == &source)
     return *this;
 
-  if (ChatBot::_image != NULL) // Attention: wxWidgets used NULL and not nullptr
-  {
-    delete ChatBot::_image;
-    ChatBot::_image = NULL;
-  }
+  delete _image;
 
-  ChatBot::_image = source._image;
+  _chatLogic = source._chatLogic;
+  _rootNode = source._rootNode;
+  _image = source._image;
+  _currentNode = source._currentNode;
+  source._chatLogic = nullptr;
+  source._rootNode = nullptr;
   source._image = NULL;
+  source._currentNode = nullptr;
 
   return *this;
 }
@@ -140,6 +150,7 @@ void ChatBot::SetCurrentNode(GraphNode *node) {
   std::string answer = answers.at(dis(generator));
 
   // send selected node answer to user
+  _chatLogic->SetChatbotHandle(this);
   _chatLogic->SendMessageToUser(answer);
 }
 
